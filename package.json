@@ -1,0 +1,15 @@
+{
+  "name": "trello-api",
+  "type": "module", 
+  "version": "1.0.0",
+  "description": "du an trello",
+  "main": "src/server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Phan Dinh Dung",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
