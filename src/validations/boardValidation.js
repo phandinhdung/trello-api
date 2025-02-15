@@ -2,12 +2,19 @@
 import Joi from 'joi';
 import { StatusCodes } from 'http-status-codes';
 import ApiError from '~/utils/ApiError';
-import { boardService } from '~/services/boardService';
+import { BOARD_TYPES } from '~/utils/constants';
 
 const createNew = async (req, res, next) => {
   const correctCondition = Joi.object({
-    title: Joi.string().required().min(3).max(50).trim().strict(),
-    description: Joi.string().required().min(3).max(255).trim().strict()
+    title: Joi.string().required().min(3).max(50).trim().strict().messages({
+      'any.required': 'Tiêu đề là được yêu cầu phải có',
+      'string.empty': 'Tiêu đề phải khác rỗng',
+      'string.min': 'tiêu đề phải có ít nhất .. kí tự',
+      'string.max': 'Tiêu đề phải <= 50 kí tự',
+      'string.trim': 'Tiêu đề phải không có khoảng trắng đầu và cuối'
+    }),
+    description: Joi.string().required().min(3).max(255).trim().strict(),
+    type: Joi.string().valid(BOARD_TYPES.PUBLIC, BOARD_TYPES.PRIVATE).required()
   })
 
   try {
