@@ -1,11 +1,8 @@
-/**
- * Updated by trungquandev.com's author on Oct 8 2023
- * YouTube: https://youtube.com/@trungquandev
- * "A bit of fragrance clings to the hand that gives flowers!"
- */
 
 import Joi from 'joi'
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '~/utils/validators'
+import { GET_DB } from '~/config/mongodb'
+import { ObjectId } from 'mongodb'
 
 // Define Collection (name & schema)
 const COLUMN_COLLECTION_NAME = 'columns'
@@ -23,7 +20,58 @@ const COLUMN_COLLECTION_SCHEMA = Joi.object({
   _destroy: Joi.boolean().default(false)
 })
 
+const validateBeforeCreate = async (data) => {
+  return await COLUMN_COLLECTION_SCHEMA.validateAsync(data, { abortEarly: false }); //{ abortEarly: false } để kiểm tra toàn bộ lỗi
+}
+
+const createNew = async (data) => {
+  try {
+    const validData = await validateBeforeCreate(data);
+    const newColumnToAdd = {
+      ...validData,
+      boardId: new ObjectId(`${validData.boardId}`)
+    };
+
+    return await GET_DB().collection(COLUMN_COLLECTION_NAME).insertOne(newColumnToAdd);
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const findOneById = async (id) => { // id là kiểu ObjectId của Mongo_DB
+  try {
+    //console.log(`${id}`);
+    //console.log('typeof : ',typeof(new ObjectId(`${id}`)));
+
+    return await GET_DB().collection(COLUMN_COLLECTION_NAME).findOne({ _id: new ObjectId(`${id}`) })
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+// Thêm một cardId vào cuối mảng cardOrderIds
+const pushCardOrderIds = async (card) => {
+  try {
+    const result = await GET_DB().collection(COLUMN_COLLECTION_NAME).findOneAndUpdate(
+      { _id: new ObjectId(`${card.columnId}`) },
+      { $push: { cardOrderIds: new ObjectId(`${card._id}`) } },
+      { returnDocument: 'after' }
+    )
+
+    // console.log('chay qua day card');
+    // console.log(result.value);
+
+
+    return result.value;
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
 export const columnModel = {
   COLUMN_COLLECTION_NAME,
-  COLUMN_COLLECTION_SCHEMA
+  COLUMN_COLLECTION_SCHEMA,
+  createNew,
+  findOneById,
+  pushCardOrderIds
 }

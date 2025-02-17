@@ -81,16 +81,36 @@ const getDetails = async (id) => { // id là kiểu ObjectId của Mongo_DB
   }
 }
 
+// Thêm một columnId vào cuối mảng columnOrderIds
+const pushColumnOrderIds = async (column) => {
+  try {
+    const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
+      { _id: new ObjectId(`${column.boardId}`) },
+      { $push: { columnOrderIds: new ObjectId(`${column._id}`) } },
+      { returnDocument: 'after' }
+    )
+
+    // const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
+    //   { _id: column.boardId },
+    //   { $push: { columnOrderIds: column._id } },
+    //   { returnDocument: 'after' }
+    // );
+
+    // console.log('chayj qua dday');
+    // console.log(result.value);
+
+
+    return result.value;
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
 export const boardModel = {
   BOARD_COLLECTION_NAME,
   BOARD_COLLECTION_SCHEMA,
   createNew,
   findOneById,
-  getDetails
+  getDetails,
+  pushColumnOrderIds
 }
-
-//67b079a3a969da906a759e5a
-
-//67b080b274fe322ae8dabeae  : column
-
-//67b0816b74fe322ae8dabeb0  :card
