@@ -42,7 +42,23 @@ const update = async (req, res, next) => {
   }
 }
 
+const deleteItem = async (req, res, next) => {
+  // không dung required() trong trường hợp update
+  const correctCondition = Joi.object({
+    id: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
+  })
+
+  try {
+    await correctCondition.validateAsync(req.params);
+
+    next()
+  } catch (error) {
+    next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, new Error(error).message));
+  }
+}
+
 export const columnValidattion = {
   createNew,
-  update
+  update,
+  deleteItem
 }

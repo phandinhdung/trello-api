@@ -9,6 +9,6 @@ Router.route('/')
 
 Router.route('/:id')
   .put(columnValidattion.update, columnController.update)
-
+  .delete(columnValidattion.deleteItem, columnController.deleteItem)
 
 export const columnRoute = Router;

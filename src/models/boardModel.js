@@ -51,12 +51,12 @@ const findOneById = async (id) => { // id là kiểu ObjectId của Mongo_DB
   }
 }
 
-const getDetails = async (id) => { // id là kiểu ObjectId của Mongo_DB
+const getDetails = async (boardId) => { // id là kiểu ObjectId của Mongo_DB
   try {
     const result = await GET_DB().collection(BOARD_COLLECTION_NAME).aggregate([
       {
         $match: {
-          _id: new ObjectId(`${id}`),
+          _id: new ObjectId(`${boardId}`),
           _destroy: false
         }
       },
@@ -109,6 +109,21 @@ const pushColumnOrderIds = async (column) => {
   }
 }
 
+// xoa một columnId ra khoi mảng columnOrderIds
+const pullColumnOrderIds = async (column) => {
+  try {
+    const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
+      { _id: new ObjectId(`${column.boardId}`) },
+      { $pull: { columnOrderIds: new ObjectId(`${column._id}`) } },
+      { returnDocument: 'after' }
+    )
+
+    return result;
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
 const update = async (boardId, updateData) => {
   try {
     Object.keys(updateData).forEach(fieldName => {
@@ -140,5 +155,6 @@ export const boardModel = {
   findOneById,
   getDetails,
   pushColumnOrderIds,
-  update
+  update,
+  pullColumnOrderIds
 }

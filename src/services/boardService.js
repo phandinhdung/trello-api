@@ -27,10 +27,11 @@ const createNew = async (reqBody) => {
 
 const getDetails = async (boardId) => {
   try {
+    //console.log('boarId la: ', boardId);
     const board = await boardModel.getDetails(boardId);
 
     if (!board) {
-      throw new ApiError(StatusCodes.NOT_FOUND, 'Board not found')
+      throw new ApiError(StatusCodes.NOT_FOUND, 'Board not found, not found')
     }
 
     const resBoard = cloneDeep(board);
@@ -80,7 +81,7 @@ const moveCardToDifferentColumn = async (reqBody) => {
       columnId: reqBody.nextColumnId
     });
 
-    return {updateResult: 'Successfully!'}
+    return { updateResult: 'Successfully!' }
   } catch (error) {
     throw error;
   }
