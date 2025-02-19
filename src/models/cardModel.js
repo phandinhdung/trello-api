@@ -63,7 +63,7 @@ const update = async (cardId, updateData) => {
       }
     })
 
-    console.log('updateData: ', updateData);
+    //console.log('updateData: ', updateData);
 
     if (updateData.columnId)
       updateData.columnId = new ObjectId(`${updateData.columnId}`);
